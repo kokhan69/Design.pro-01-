@@ -1,0 +1,10 @@
+{% extends 'layout/basic.html' %}
+{% block title %}Активация выполнена{% endblock %}
+{% block content %}
+<h2>Активация</h2>
+{% if already_activated %}
+<p>Пользователь с таким именем уже был активирован ранее.</p>
+{% else %}
+<p>Пользователь с таким именем успешно активирован.</p>
+{% endif %}<p><a href="{% url 'login' %}">Войти на сайт</a></p>
+{% endblock %}
