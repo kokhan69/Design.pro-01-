@@ -1,0 +1,14 @@
+{% extends 'layout/basic.html' %}
+{% block title %}Главная{% endblock %}
+{% block content %}
+<h2>Добро пожаловать на сайт Design.pro!</h2>
+<p class="lead">Мы очень крутые дизайнеры с очень маленьким бюджетом.</p>
+{% if user.is_authenticated %}
+<div class="alert alert-success mt-4">
+    Вы вошли как: <strong>{{ user.username }}</strong>
+</div>
+<a href="{% url 'admin:index' %}" class="btn btn-outline-secondary">Перейти в админ панель</a>
+{% else %}
+<p><a href="{% url 'login' %}" class="btn btn-primary">Войти на сайт</a></p>
+{% endif %}
+{% endblock %}

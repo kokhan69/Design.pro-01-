@@ -8,6 +8,9 @@ from .forms import RegisterForm
 from .models import AdvUser
 from .utilities import signer
 
+def index(request):
+    return render(request, 'design/index.html')
+
 class BBLoginView(LoginView):
     template_name = 'design/login.html'
 
