@@ -11,6 +11,9 @@ from .forms import RegisterForm, ApplicationForm
 from .models import AdvUser, Application
 from .utilities import signer
 
+from django.views.generic.edit import DeleteView
+from django.core.exceptions import PermissionDenied
+
 def index(request):
     return render(request, 'design/index.html')
 
@@ -65,3 +68,14 @@ def profile(request):
     applications = Application.objects.filter(user=request.user)
     context = {'applications': applications}
     return render(request, 'design/profile.html', context)
+
+class ApplicationDeleteView(DeleteView):
+    model = Application
+    template_name = 'design/application_delete.html'
+    success_url = reverse_lazy('profile')
+
+    def dispatch(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if obj.user != request.user or obj.status != 'new':
+            raise PermissionDenied("Вы не можете удалить эту заявку.")
+        return super().dispatch(request, *args, **kwargs)
