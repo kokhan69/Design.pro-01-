@@ -1,3 +1,7 @@
-from django.shortcuts import render
+from django.contrib.auth.views import LoginView, LogoutView
 
-# Create your views here.
+class BBLoginView(LoginView):
+    template_name = 'design/login.html'
+
+class BBLogoutView(LogoutView):
+    next_page = 'index'
