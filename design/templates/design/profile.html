@@ -1,0 +1,22 @@
+{% extends 'layout/basic.html' %}
+{% block title %}Профиль пользователя{% endblock %}
+{% block content %}
+<h2>Профиль пользователя {{ user.username }}</h2>
+<p>Здравствуйте, {{ user.first_name }}!</p>
+<h3>Ваши заявки</h3>
+{% if applications %}
+{% for app in applications %}
+<div class="card mb-2">
+    <div class="card-body">
+        <h5 class="card-title">{{ app.title }}</h5>
+        <p class="card-text">{{ app.description }}</p>
+        <p><strong>Категория:</strong> {{ app.category.name }}</p>
+        <p><strong>Статус:</strong> {{ app.get_status_display }}</p>
+        <p class="text-muted">{{ app.created_at }}</p>
+    </div>
+</div>
+{% endfor %}
+{% else %}
+<p>У вас пока нет заявок.</p>
+{% endif %}
+{% endblock %}

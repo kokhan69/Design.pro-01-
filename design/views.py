@@ -1,11 +1,14 @@
 from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.decorators import login_required
 from django.views.generic.edit import CreateView
 from django.views.generic.base import TemplateView
 from django.urls import reverse_lazy
 from django.core.signing import BadSignature
-from django.shortcuts import render, get_object_or_404
-from .forms import RegisterForm
-from .models import AdvUser
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
+
+from .forms import RegisterForm, ApplicationForm
+from .models import AdvUser, Application
 from .utilities import signer
 
 def index(request):
@@ -41,3 +44,24 @@ def user_activate(request, sign):
         user.is_activated = True
         user.save()
         return render(request, 'design/activation_done.html', {'already_activated': False})
+
+@login_required
+def application_create(request):
+    if request.method == 'POST':
+        form = ApplicationForm(request.POST, request.FILES)
+        if form.is_valid():
+            application = form.save(commit=False)
+            application.user = request.user
+            application.save()
+            messages.success(request, 'Заявка успешно создана!')
+            return redirect('profile')
+    else:
+        form = ApplicationForm()
+
+    return render(request, 'design/application_create.html', {'form': form})
+
+@login_required
+def profile(request):
+    applications = Application.objects.filter(user=request.user)
+    context = {'applications': applications}
+    return render(request, 'design/profile.html', context)

@@ -3,7 +3,7 @@ from django.contrib.auth import password_validation
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from .signals import post_register
-from .models import AdvUser
+from .models import AdvUser, Application, Category
 
 # Валидатор для ФИО (только кириллические буквы, дефис и пробелы)
 validate_cyrillic = RegexValidator(
@@ -96,3 +96,13 @@ class RegisterForm(forms.ModelForm):
         model = AdvUser
         fields = ('username', 'email', 'password1', 'password2',
                   'first_name', 'last_name', 'patronymic', 'send_messages')
+
+class ApplicationForm(forms.ModelForm):
+    class Meta:
+        model = Application
+        fields = ('title', 'description', 'category', 'image')
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
+            'category': forms.Select(attrs={'class': 'form-select'}),
+        }
