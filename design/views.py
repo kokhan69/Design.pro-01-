@@ -15,7 +15,14 @@ from .utilities import signer
 from django.core.exceptions import PermissionDenied
 
 def index(request):
-    return render(request, 'design/index.html')
+    completed_applications = Application.objects.filter(status='done').order_by('-created_at')[:4]
+    in_progress_count = Application.objects.filter(status='in_progress').count()
+    context = {
+        'completed_applications': completed_applications,
+        'in_progress_count': in_progress_count,
+    }
+    return render(request, 'design/index.html', context)
+
 
 class BBLoginView(LoginView):
     template_name = 'design/login.html'
@@ -66,7 +73,13 @@ def application_create(request):
 @login_required
 def profile(request):
     applications = Application.objects.filter(user=request.user)
-    context = {'applications': applications}
+    status_filter = request.GET.get('status')
+    if status_filter in ['new', 'in_progress', 'done']:
+        applications = applications.filter(status=status_filter)
+    context = {
+        'applications': applications,
+        'current_status': status_filter,
+    }
     return render(request, 'design/profile.html', context)
 
 class ApplicationDeleteView(DeleteView):

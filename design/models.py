@@ -41,7 +41,7 @@ class Application(models.Model):
     )
 
     user = models.ForeignKey(AdvUser, on_delete=models.CASCADE, verbose_name='Пользователь')
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, verbose_name='Категория')
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='Категория')
 
     title = models.CharField(max_length=100, verbose_name='Название')
     description = models.TextField(verbose_name='Описание')
@@ -72,6 +72,14 @@ class Application(models.Model):
 
     def __str__(self):
         return f"{self.title} ({self.user.username})"
+
+    def clean(self):
+        super().clean()
+        if self.status == 'done' and not self.design_image:
+            raise ValidationError(
+                {'design_image': 'Для статуса "Выполнено" необходимо прикрепить изображение дизайна.'})
+        if self.status == 'in_progress' and not self.admin_comment:
+            raise ValidationError({'admin_comment': 'Для статуса "Принято в работу" необходимо указать комментарий.'})
 
     class Meta:
         verbose_name = 'Заявка'

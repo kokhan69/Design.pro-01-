@@ -11,4 +11,35 @@
 {% else %}
 <p><a href="{% url 'login' %}" class="btn btn-primary">Войти на сайт</a></p>
 {% endif %}
+<div class="alert alert-info mt-4">
+    <h4>Сейчас в работе: <strong>{{ in_progress_count }}</strong> заявок</h4>
+</div>
+<h3 class="mt-5">Наши последние работы</h3>
+<div class="row">
+    {% for app in completed_applications %}
+    <div class="col-md-3 mb-4">
+        <div class="card h-100">
+            {% if app.design_image %}
+            <img src="{{ app.design_image.url }}" class="card-img-top" alt="{{ app.title }}"
+                 style="object-fit: cover; height: 200px;">
+            {% else %}
+            <div class="bg-secondary text-white d-flex align-items-center justify-content-center"
+                 style="height: 200px;">
+                Нет фото
+            </div>
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ app.title }}</h5>
+                <p class="card-text">{{ app.description|truncatechars:100 }}</p>
+                <p class="text-muted"><small>Категория: {{ app.category.name }}</small></p>
+                <p class="text-muted"><small>{{ app.created_at|date:"d.m.Y H:i" }}</small></p>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <p>Пока нет выполненных работ. Никто не обращается.</p>
+    </div>
+    {% endfor %}
+</div>
 {% endblock %}

@@ -3,7 +3,23 @@
 {% block content %}
 <h2>Профиль пользователя {{ user.username }}</h2>
 <p>Здравствуйте, {{ user.first_name }}!</p>
+<p>
+    <a href="{% url 'application_create' %}" class="btn btn-success mt-3 mb-3">
+        Создать новую заявку
+    </a>
+</p>
 <h3>Ваши заявки</h3>
+<div class="mb-3">
+    <a href="{% url 'profile' %}"
+       class="btn btn-sm {% if not current_status %}btn-primary{% else %}btn-outline-primary{% endif %}">Все</a>
+    <a href="{% url 'profile' %}?status=new"
+       class="btn btn-sm {% if current_status == 'new' %}btn-primary{% else %}btn-outline-primary{% endif %}">Новые</a>
+    <a href="{% url 'profile' %}?status=in_progress"
+       class="btn btn-sm {% if current_status == 'in_progress' %}btn-primary{% else %}btn-outline-primary{% endif %}">В
+        работе</a>
+    <a href="{% url 'profile' %}?status=done"
+       class="btn btn-sm {% if current_status == 'done' %}btn-primary{% else %}btn-outline-primary{% endif %}">Выполненные</a>
+</div>
 {% if applications %}
 {% for app in applications %}
 <div class="card mb-2">
