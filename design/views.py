@@ -1,17 +1,17 @@
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.decorators import login_required
-from django.views.generic.edit import CreateView
+from django.contrib.auth.mixins import UserPassesTestMixin
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.base import TemplateView
 from django.urls import reverse_lazy
 from django.core.signing import BadSignature
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 
-from .forms import RegisterForm, ApplicationForm
+from .forms import RegisterForm, ApplicationForm, AdminApplicationForm
 from .models import AdvUser, Application
 from .utilities import signer
 
-from django.views.generic.edit import DeleteView
 from django.core.exceptions import PermissionDenied
 
 def index(request):
@@ -79,3 +79,12 @@ class ApplicationDeleteView(DeleteView):
         if obj.user != request.user or obj.status != 'new':
             raise PermissionDenied("Вы не можете удалить эту заявку.")
         return super().dispatch(request, *args, **kwargs)
+
+class AdminApplicationUpdateView(UserPassesTestMixin, UpdateView):
+    model = Application
+    form_class = AdminApplicationForm
+    template_name = 'design/admin_application_update.html'
+    success_url = reverse_lazy('profile')
+
+    def test_func(self):
+        return self.request.user.is_staff

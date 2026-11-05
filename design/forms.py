@@ -106,3 +106,26 @@ class ApplicationForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
             'category': forms.Select(attrs={'class': 'form-select'}),
         }
+
+class AdminApplicationForm(forms.ModelForm):
+    class Meta:
+        model = Application
+        fields = ('status', 'admin_comment', 'design_image')
+        widgets = {
+            'status': forms.Select(attrs={'class': 'form-select'}),
+            'admin_comment': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        status = cleaned_data.get('status')
+        comment = cleaned_data.get('admin_comment')
+        image = cleaned_data.get('design_image')
+
+        if status == 'in_progress' and not comment:
+            self.add_error('admin_comment', 'Для этого статуса необходимо указать комментарий.')
+
+        if status == 'done' and not image:
+            self.add_error('design_image', 'Для этого статуса необходимо прикрепить изображение дизайна.')
+
+        return cleaned_data
